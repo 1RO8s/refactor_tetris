@@ -109,18 +109,13 @@ int hasToUpdate(){
 	return ((suseconds_t)(now.tv_sec*1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec*1000000 + before_now.tv_usec)) > timer;
 }
 
-void set_timeout(int time) {
-	time = 1;
-	timeout(1);
-}
-
 int main() {
     srand(time(0));
     final = 0;
     int c;
     initscr();
 	gettimeofday(&before_now, NULL);
-	set_timeout(1);
+	timeout(1);
 	Struct new_shape = FunctionCS(StructsArray[rand()%7]);
     new_shape.col = rand()%(C-new_shape.width+1);
     new_shape.row = 0;
