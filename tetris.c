@@ -70,7 +70,7 @@ int FunctionCP(Struct shape){
 	return TRUE;
 }
 
-void FunctionRS(Struct shape){
+void rotate_shape(Struct shape){
 	Struct temp = copy_shape(shape);
 	int i, j, k, width;
 	width = shape.width;
@@ -110,21 +110,21 @@ int hasToUpdate(){
 }
 
 int main() {
-    srand(time(0));
-    final = 0;
-    int c;
-    initscr();
+  srand(time(0));
+  final = 0;
+  int c;
+  initscr();
 	gettimeofday(&before_now, NULL);
 	timeout(1);
 	Struct new_shape = copy_shape(StructsArray[rand()%7]);
-    new_shape.col = rand()%(COLUMN-new_shape.width+1);
-    new_shape.row = 0;
-    FunctionDS(current);
+  new_shape.col = rand()%(COLUMN-new_shape.width+1);
+  new_shape.row = 0;
+  FunctionDS(current);
 	current = new_shape;
 	if(!FunctionCP(current)){
 		GameOn = FALSE;
 	}
-    FunctionPT();
+  FunctionPT();
 	while(GameOn){
 		if ((c = getch()) != ERR) {
 			Struct temp = copy_shape(current);
@@ -180,9 +180,9 @@ int main() {
 						current.col--;
 					break;
 				case 'w':
-					FunctionRS(temp);
+					rotate_shape(temp);
 					if(FunctionCP(temp))
-						FunctionRS(current);
+						rotate_shape(current);
 					break;
 			}
 			FunctionDS(temp);
@@ -242,9 +242,9 @@ int main() {
 						current.col--;
 					break;
 				case 'w':
-					FunctionRS(temp);
+					rotate_shape(temp);
 					if(FunctionCP(temp))
-						FunctionRS(current);
+						rotate_shape(current);
 					break;
 			}
 			FunctionDS(temp);
