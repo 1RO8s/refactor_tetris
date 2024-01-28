@@ -31,7 +31,7 @@ const Struct StructsArray[7]= {
 	{(char *[]){(char []){0,0,0,0}, (char []){1,1,1,1}, (char []){0,0,0,0}, (char []){0,0,0,0}}, 4}
 };
 
-Struct FunctionCS(Struct shape){
+Struct copy_shape(Struct shape){
 	Struct new_shape = shape;
 	char **copyshape = shape.array;
 	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
@@ -71,7 +71,7 @@ int FunctionCP(Struct shape){
 }
 
 void FunctionRS(Struct shape){
-	Struct temp = FunctionCS(shape);
+	Struct temp = copy_shape(shape);
 	int i, j, k, width;
 	width = shape.width;
 	for(i = 0; i < width ; i++){
@@ -116,7 +116,7 @@ int main() {
     initscr();
 	gettimeofday(&before_now, NULL);
 	timeout(1);
-	Struct new_shape = FunctionCS(StructsArray[rand()%7]);
+	Struct new_shape = copy_shape(StructsArray[rand()%7]);
     new_shape.col = rand()%(COLUMN-new_shape.width+1);
     new_shape.row = 0;
     FunctionDS(current);
@@ -127,7 +127,7 @@ int main() {
     FunctionPT();
 	while(GameOn){
 		if ((c = getch()) != ERR) {
-			Struct temp = FunctionCS(current);
+			Struct temp = copy_shape(current);
 			switch(c){
 				case 's':
 					temp.row++;  //move down
@@ -159,7 +159,7 @@ int main() {
 							}
 						}
 						final += 100*count;
-						Struct new_shape = FunctionCS(StructsArray[rand()%7]);
+						Struct new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
 						FunctionDS(current);
@@ -190,7 +190,7 @@ int main() {
 		}
 		gettimeofday(&now, NULL);
 		if (hasToUpdate()) {
-			Struct temp = FunctionCS(current);
+			Struct temp = copy_shape(current);
 			switch('s'){
 				case 's':
 					temp.row++;
@@ -221,7 +221,7 @@ int main() {
 								timer-=decrease--;
 							}
 						}
-						Struct new_shape = FunctionCS(StructsArray[rand()%7]);
+						Struct new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
 						FunctionDS(current);
