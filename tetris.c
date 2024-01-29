@@ -18,13 +18,14 @@ char GameOn = TRUE;
 suseconds_t timer = 400000;
 int decrease = 1000;
 
-typedef struct {
+typedef struct s_shape {
     char **array;
     int width, row, col;
-} Struct;
-Struct current;
+} t_shape;
 
-const Struct StructsArray[7]= {
+t_shape current;
+
+const t_shape StructsArray[7]= {
 	{(char *[]){(char []){0,1,1},(char []){1,1,0}, (char []){0,0,0}}, 3},
 	{(char *[]){(char []){1,1,0},(char []){0,1,1}, (char []){0,0,0}}, 3},
 	{(char *[]){(char []){0,1,0},(char []){1,1,1}, (char []){0,0,0}}, 3},
@@ -34,8 +35,8 @@ const Struct StructsArray[7]= {
 	{(char *[]){(char []){0,0,0,0}, (char []){1,1,1,1}, (char []){0,0,0,0}, (char []){0,0,0,0}}, 4}
 };
 
-Struct copy_shape(Struct shape){
-	Struct new_shape = shape;
+t_shape copy_shape(t_shape shape){
+	t_shape new_shape = shape;
 	char **copyshape = shape.array;
 	new_shape.array = (char**)malloc(new_shape.width*sizeof(char*));
     int i, j;
@@ -48,7 +49,7 @@ Struct copy_shape(Struct shape){
     return new_shape;
 }
 
-void delete_shape(Struct shape){
+void delete_shape(t_shape shape){
     int i;
     for(i = 0; i < shape.width; i++){
 		free(shape.array[i]);
@@ -56,7 +57,7 @@ void delete_shape(Struct shape){
     free(shape.array);
 }
 
-int FunctionCP(Struct shape){
+int FunctionCP(t_shape shape){
 	char **array = shape.array;
 	int i, j;
 	for(i = 0; i < shape.width;i++) {
@@ -73,8 +74,8 @@ int FunctionCP(Struct shape){
 	return TRUE;
 }
 
-void rotate_shape(Struct shape){
-	Struct temp = copy_shape(shape);
+void rotate_shape(t_shape shape){
+	t_shape temp = copy_shape(shape);
 	int i, j, k, width;
 	width = shape.width;
 	for(i = 0; i < width ; i++){
@@ -140,25 +141,27 @@ int	clear_completed_lines(char table[ROW][COLUMN])
 		{
 			completed_line++;
 			line_clear(Table, n);
-			timer -= decrease--;
+			timer -= decrease--; // 更新頻度を短くする
 		}
 	}
 	return completed_line;
 }
 
 struct timeval before_now, now;
-int hasToUpdate(){
+
+// int hasToUpdate(){
+int is_updatetime(){
 	return ((suseconds_t)(now.tv_sec*1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec*1000000 + before_now.tv_usec)) > timer;
 }
 
 int main() {
   srand(time(0));
   score = 0;
-  int c;
+  char ch; // 入力された文字
   initscr();
 	gettimeofday(&before_now, NULL);
 	timeout(1);
-	Struct new_shape = copy_shape(StructsArray[rand()%7]);
+	t_shape new_shape = copy_shape(StructsArray[rand()%7]);
   new_shape.col = rand()%(COLUMN-new_shape.width+1);
   new_shape.row = 0;
   delete_shape(current);
@@ -168,9 +171,9 @@ int main() {
 	}
   FunctionPT();
 	while(GameOn){
-		if ((c = getch()) != ERR) {
-			Struct temp = copy_shape(current);
-			switch(c){
+		if ((ch = getch()) != ERR) {
+			t_shape temp = copy_shape(current);
+			switch(ch){
 				case 's':
 					temp.row++;  //move down
 					if(FunctionCP(temp))
@@ -188,7 +191,7 @@ int main() {
 						completed_line = clear_completed_lines(Table);
 						score += 100*completed_line;
 						// 新しいブロックを生成
-						Struct new_shape = copy_shape(StructsArray[rand()%7]);
+						t_shape new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
 						delete_shape(current);
@@ -218,10 +221,11 @@ int main() {
 			FunctionPT();
 		}
 		gettimeofday(&now, NULL);
-		if (hasToUpdate()) {
-			Struct temp = copy_shape(current);
-			switch('s'){
-				case 's':
+		// 一定時間ごとにブロックを下に移動
+		if (is_updatetime()) {
+			t_shape temp = copy_shape(current);
+			// switch('s'){
+			// 	case 's':
 					temp.row++;
 					if(FunctionCP(temp))
 						current.row++;
@@ -236,7 +240,8 @@ int main() {
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
-						Struct new_shape = copy_shape(StructsArray[rand()%7]);
+						// 新しいブロックを生成
+						t_shape new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
 						delete_shape(current);
@@ -245,23 +250,8 @@ int main() {
 							GameOn = FALSE;
 						}
 					}
-					break;
-				case 'd':
-					temp.col++;
-					if(FunctionCP(temp))
-						current.col++;
-					break;
-				case 'a':
-					temp.col--;
-					if(FunctionCP(temp))
-						current.col--;
-					break;
-				case 'w':
-					rotate_shape(temp);
-					if(FunctionCP(temp))
-						rotate_shape(current);
-					break;
-			}
+			// 		break;
+			// }
 			delete_shape(temp);
 			FunctionPT();
 			gettimeofday(&before_now, NULL);
