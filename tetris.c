@@ -9,8 +9,11 @@
 #define TRUE 1
 #define FALSE 0
 
-char Table[ROW][COLUMN] = {0};
-int final = 0;
+#define BLOCK '*'
+#define EMPTY '.'
+
+char Table[ROW][COLUMN] = {0}; // 現在の盤面を表す
+int score = 0;
 char GameOn = TRUE;
 suseconds_t timer = 400000;
 int decrease = 1000;
@@ -45,7 +48,7 @@ Struct copy_shape(Struct shape){
     return new_shape;
 }
 
-void FunctionDS(Struct shape){
+void delete_shape(Struct shape){
     int i;
     for(i = 0; i < shape.width; i++){
 		free(shape.array[i]);
@@ -79,7 +82,7 @@ void rotate_shape(Struct shape){
 				shape.array[i][j] = temp.array[k][i];
 		}
 	}
-	FunctionDS(temp);
+	delete_shape(temp);
 }
 
 void FunctionPT(){
@@ -97,11 +100,50 @@ void FunctionPT(){
 	printw("42 Tetris\n");
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printw("%c ", (Table[i][j] + Buffer[i][j])? '#': '.');
+			// printw("%c ", (Table[i][j] + Buffer[i][j])? '#': '.');
+			printw("%c ", (Table[i][j] + Buffer[i][j])? BLOCK: EMPTY);
 		}
 		printw("\n");
 	}
-	printw("\nScore: %d\n", final);
+	printw("\nScore: %d\n", score);
+}
+
+int is_completed_line(char line[COLUMN]) {
+	int i;
+	for (i = 0; i < COLUMN; i++) {
+		if (line[i] == 0) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+// n行目を消す
+void	line_clear(char table[ROW][COLUMN], int n)
+{
+	int i, j;
+	// nより上の行を下にずらす
+	for (i = n; i >= 1; i--)
+		for (j = 0; j < COLUMN; j++)
+			Table[i][j] = Table[i - 1][j];
+	// 一番上の行は空行にする
+	for (j = 0; j < COLUMN; j++)
+		Table[0][j] = 0;
+}
+
+int	clear_completed_lines(char table[ROW][COLUMN])
+{
+	int n, m, completed_line = 0;
+	for (n = 0; n < ROW; n++)
+	{
+		if (is_completed_line(Table[n]))
+		{
+			completed_line++;
+			line_clear(Table, n);
+			timer -= decrease--;
+		}
+	}
+	return completed_line;
 }
 
 struct timeval before_now, now;
@@ -111,7 +153,7 @@ int hasToUpdate(){
 
 int main() {
   srand(time(0));
-  final = 0;
+  score = 0;
   int c;
   initscr();
 	gettimeofday(&before_now, NULL);
@@ -119,7 +161,7 @@ int main() {
 	Struct new_shape = copy_shape(StructsArray[rand()%7]);
   new_shape.col = rand()%(COLUMN-new_shape.width+1);
   new_shape.row = 0;
-  FunctionDS(current);
+  delete_shape(current);
 	current = new_shape;
 	if(!FunctionCP(current)){
 		GameOn = FALSE;
@@ -141,28 +183,15 @@ int main() {
 									Table[current.row+i][current.col+j] = current.array[i][j];
 							}
 						}
-						int n, m, sum, count=0;
-						for(n=0;n<ROW;n++){
-							sum = 0;
-							for(m=0;m< COLUMN;m++) {
-								sum+=Table[n][m];
-							}
-							if(sum==COLUMN){
-								count++;
-								int l, k;
-								for(k = n;k >=1;k--)
-									for(l=0;l<COLUMN;l++)
-										Table[k][l]=Table[k-1][l];
-								for(l=0;l<COLUMN;l++)
-									Table[k][l]=0;
-								timer-=decrease--;
-							}
-						}
-						final += 100*count;
+						// そろった行を消す
+						int completed_line=0;
+						completed_line = clear_completed_lines(Table);
+						score += 100*completed_line;
+						// 新しいブロックを生成
 						Struct new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
-						FunctionDS(current);
+						delete_shape(current);
 						current = new_shape;
 						if(!FunctionCP(current)){
 							GameOn = FALSE;
@@ -185,7 +214,7 @@ int main() {
 						rotate_shape(current);
 					break;
 			}
-			FunctionDS(temp);
+			delete_shape(temp);
 			FunctionPT();
 		}
 		gettimeofday(&now, NULL);
@@ -204,27 +233,13 @@ int main() {
 									Table[current.row+i][current.col+j] = current.array[i][j];
 							}
 						}
-						int n, m, sum, count=0;
-						for(n=0;n<ROW;n++){
-							sum = 0;
-							for(m=0;m< COLUMN;m++) {
-								sum+=Table[n][m];
-							}
-							if(sum==COLUMN){
-								count++;
-								int l, k;
-								for(k = n;k >=1;k--)
-									for(l=0;l<COLUMN;l++)
-										Table[k][l]=Table[k-1][l];
-								for(l=0;l<COLUMN;l++)
-									Table[k][l]=0;
-								timer-=decrease--;
-							}
-						}
+						// そろった行を消す
+						int completed_line=0;
+						completed_line = clear_completed_lines(Table);
 						Struct new_shape = copy_shape(StructsArray[rand()%7]);
 						new_shape.col = rand()%(COLUMN-new_shape.width+1);
 						new_shape.row = 0;
-						FunctionDS(current);
+						delete_shape(current);
 						current = new_shape;
 						if(!FunctionCP(current)){
 							GameOn = FALSE;
@@ -247,21 +262,21 @@ int main() {
 						rotate_shape(current);
 					break;
 			}
-			FunctionDS(temp);
+			delete_shape(temp);
 			FunctionPT();
 			gettimeofday(&before_now, NULL);
 		}
 	}
-	FunctionDS(current);
+	delete_shape(current);
 	endwin();
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printf("%c ", Table[i][j] ? '#': '.');
+			printf("%c ", Table[i][j] ? BLOCK: EMPTY);
 		}
 		printf("\n");
 	}
 	printf("\nGame over!\n");
-	printf("\nScore: %d\n", final);
+	printf("\nScore: %d\n", score);
     return 0;
 }
