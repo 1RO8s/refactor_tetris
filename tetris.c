@@ -4,8 +4,8 @@
 #include <sys/time.h>
 #include <ncurses.h>
 
-#define ROW 20
-#define COLUMN 15
+#define ROW 20 // 縦のマス数
+#define COLUMN 15 // 横のマス数
 #define TRUE 1
 #define FALSE 0
 
@@ -86,7 +86,9 @@ void rotate_shape(t_shape shape){
 	delete_shape(temp);
 }
 
-void FunctionPT(){
+// 現在のブロック位置を画面上に反映する
+void update_screen(){
+	// ブロック位置の情報をバッファに書き込む
 	char Buffer[ROW][COLUMN] = {0};
 	int i, j;
 	for(i = 0; i < current.width ;i++){
@@ -96,13 +98,11 @@ void FunctionPT(){
 		}
 	}
 	clear();
-	for(i=0; i<COLUMN-9; i++)
-		printw(" ");
-	printw("42 Tetris\n");
+	printw("         42 Tetris\n");
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			// printw("%c ", (Table[i][j] + Buffer[i][j])? '#': '.');
 			printw("%c ", (Table[i][j] + Buffer[i][j])? BLOCK: EMPTY);
+			// printw("%c ", Table[i][j]? BLOCK: EMPTY);
 		}
 		printw("\n");
 	}
@@ -147,6 +147,16 @@ int	clear_completed_lines(char table[ROW][COLUMN])
 	return completed_line;
 }
 
+void set_block_position(t_shape shape){
+	int i, j;
+	for(i = 0; i < shape.width ;i++){
+		for(j = 0; j < shape.width ; j++){
+			if(shape.array[i][j])
+				Table[shape.row+i][shape.col+j] = shape.array[i][j];
+		}
+	}
+}
+
 struct timeval before_now, now;
 
 // int hasToUpdate(){
@@ -169,7 +179,8 @@ int main() {
 	if(!FunctionCP(current)){
 		GameOn = FALSE;
 	}
-  FunctionPT();
+	// set_block_position(current);
+  update_screen();
 	while(GameOn){
 		if ((ch = getch()) != ERR) {
 			t_shape temp = copy_shape(current);
@@ -179,6 +190,7 @@ int main() {
 					if(FunctionCP(temp))
 						current.row++;
 					else {
+						// ブロック位置の情報をTableに書き込む
 						int i, j;
 						for(i = 0; i < current.width ;i++){
 							for(j = 0; j < current.width ; j++){
@@ -218,7 +230,8 @@ int main() {
 					break;
 			}
 			delete_shape(temp);
-			FunctionPT();
+			// set_block_position(current);
+			update_screen();
 		}
 		gettimeofday(&now, NULL);
 		// 一定時間ごとにブロックを下に移動
@@ -240,9 +253,10 @@ int main() {
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
+						score += 100*completed_line;
 						// 新しいブロックを生成
 						t_shape new_shape = copy_shape(StructsArray[rand()%7]);
-						new_shape.col = rand()%(COLUMN-new_shape.width+1);
+						new_shape.col = rand()%(COLUMN-new_shape.width+1); // 横の位置をランダムに決める
 						new_shape.row = 0;
 						delete_shape(current);
 						current = new_shape;
@@ -253,7 +267,8 @@ int main() {
 			// 		break;
 			// }
 			delete_shape(temp);
-			FunctionPT();
+			// set_block_position(current);
+			update_screen();
 			gettimeofday(&before_now, NULL);
 		}
 	}
