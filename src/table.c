@@ -60,3 +60,14 @@ int	clear_completed_lines(char table[ROW][COLUMN])
 		}
 	return completed_line;
 }
+
+// ブロック位置を確定させる
+void fix_shape_position(t_shape shape){
+	int i, j;
+	for(i = 0; i < shape.width ;i++){
+		for(j = 0; j < shape.width ; j++){
+			if(shape.layout[i][j])
+				Table[shape.row+i][shape.col+j] = shape.layout[i][j];
+		}
+	}
+}

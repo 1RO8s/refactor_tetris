@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/01/30 19:55:26 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:01:50 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,12 @@ void		update_screen(t_shape shape);
 void		set_active_shape_position(t_shape shape);
 void		line_clear(char table[ROW][COLUMN], int n);
 int			clear_completed_lines(char table[ROW][COLUMN]);
+void fix_shape_position(t_shape shape);
 
 // utils.c
 int			is_completed_line(char line[COLUMN]);
+int is_valid_position(t_shape shape);
+void print_result();
+int is_updatetime();
 
 #endif
