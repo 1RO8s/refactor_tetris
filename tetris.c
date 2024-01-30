@@ -8,9 +8,6 @@ struct timeval before_now;
 struct timeval now;
 int score = 0;
 
-t_shape current; // 現在操作中のブロック
-// t_shape current; // 現在操作中のブロック
-
 int main() {
   srand(time(0));
   score = 0;
@@ -18,10 +15,11 @@ int main() {
   initscr();
 	gettimeofday(&before_now, NULL);
 	timeout(1);
-	delete_shape(current);
-	t_shape new_shape = generate_new_shape();
-	current = new_shape;
-	// if(!FunctionCP(current)){
+	t_shape current; // 現在操作中のブロック
+	// delete_shape(current);
+	// t_shape new_shape = generate_new_shape();
+	// current = new_shape;
+	current = generate_new_shape();
 	if(!is_valid_position(current)){
 		GameOn = FALSE;
 	}
@@ -36,16 +34,17 @@ int main() {
 					if(is_valid_position(temp))
 						current.row++;
 					else {
-						// ブロック位置の情報をTableに書き込む
+						// ブロック位置を確定
 						fix_shape_position(current);
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
 						score += 100*completed_line;
 						// 新しいブロックを生成
-						t_shape new_shape = generate_new_shape();
-						delete_shape(current);
-						current = new_shape;
+						// delete_shape(current);
+						// t_shape new_shape = generate_new_shape();
+						// current = new_shape;
+						current = generate_new_shape();
 						if(!is_valid_position(current)){
 							GameOn = FALSE;
 						}
@@ -79,16 +78,17 @@ int main() {
 					if(is_valid_position(temp))
 						current.row++;
 					else {
-						// ブロック位置の情報をTableに書き込む
+						// ブロック位置を確定
 						fix_shape_position(current);
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
 						score += 100*completed_line;
 						// 新しいブロックを生成
-						t_shape new_shape = generate_new_shape();
-						delete_shape(current);
-						current = new_shape;
+						// delete_shape(current);
+						// t_shape new_shape = generate_new_shape();
+						// current = new_shape;
+						current = generate_new_shape();
 						if(!is_valid_position(current)){
 							GameOn = FALSE;
 						}

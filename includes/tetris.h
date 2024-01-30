@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/01/30 20:01:50 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/01/30 20:08:19 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,34 +21,11 @@
 
 # define ROW 20    // 縦のマス数
 # define COLUMN 15 // 横のマス数
+# define BLOCK '*' // ブロックを表す文字
+# define EMPTY '.' // ブロックがないことを表す文字
 # define TRUE 1
 # define FALSE 0
-# define BLOCK '*'
-# define EMPTY '.'
 
-/**
- * @struct s_shape
- * @brief Represents a Tetris piece's shape and position on the game board.
- *
- * This structure is used to store the layout and dimensions of a Tetris piece,
- * as well as its current position on the game board. The layout is represented
- * as a 2D array of characters, where each character can indicate a part of the
- * piece or an empty space. The width denotes the size of the piece's layout,
-
-	* and the row and col fields specify the piece's top-left position on the board.
- *
- * @var char **layout
- * 2D array representing the piece's layout.
- *
- * @var int width
- * The width of the piece's layout (how many columns it occupies).
- *
- * @var int row
- * The row position of the piece's top-left corner on the game board.
- *
- * @var int col
- * The column position of the piece's top-left corner on the game board.
- */
 typedef struct s_shape
 {
 	char	**layout;
@@ -74,12 +51,11 @@ void		update_screen(t_shape shape);
 void		set_active_shape_position(t_shape shape);
 void		line_clear(char table[ROW][COLUMN], int n);
 int			clear_completed_lines(char table[ROW][COLUMN]);
-void fix_shape_position(t_shape shape);
-
+void		fix_shape_position(t_shape shape);
 // utils.c
+void		print_result(void);
+int			is_valid_position(t_shape shape);
 int			is_completed_line(char line[COLUMN]);
-int is_valid_position(t_shape shape);
-void print_result();
-int is_updatetime();
+int			is_updatetime(void);
 
 #endif

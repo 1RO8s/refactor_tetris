@@ -15,11 +15,6 @@ t_shape generate_new_shape(){
 	t_shape new_shape = copy_shape(BLOCK_PATTERN[rand()%7]);
 	new_shape.col = rand()%(COLUMN-new_shape.width+1);
 	new_shape.row = 0;
-	// delete_shape(current);
-	// current = new_shape;
-	// if(!FunctionCP(current)){
-	// 	GameOn = FALSE;
-	// }
 	return new_shape;
 }
 
