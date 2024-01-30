@@ -1,32 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#include <ncurses.h>
-
-#define ROW 20 // 縦のマス数
-#define COLUMN 15 // 横のマス数
-#define TRUE 1
-#define FALSE 0
-
-#define BLOCK '*'
-#define EMPTY '.'
+# include "tetris.h"
 
 char Table[ROW][COLUMN] = {0}; // 現在の盤面を表す
 int score = 0;
 int GameOn = TRUE;
-// suseconds_t timer = 400000;
 suseconds_t update_interval = 400000;
 int decrease = 1000;
+struct timeval before_now; // 前回の画面更新時間
+struct timeval now; // 現在の時間
 
-typedef struct s_shape {
-		char **layout;
-    int width, row, col;
-} t_shape;
+t_shape current; // 現在操作中のブロック
+// t_shape current; // 現在操作中のブロック
 
-t_shape current;
-
-// const t_shape StructsArray[7]= {
 const t_shape BLOCK_PATTERN[7]= {
 	{(char *[]){(char []){0,1,1},(char []){1,1,0}, (char []){0,0,0}}, 3},
 	{(char *[]){(char []){1,1,0},(char []){0,1,1}, (char []){0,0,0}}, 3},
@@ -36,15 +20,6 @@ const t_shape BLOCK_PATTERN[7]= {
 	{(char *[]){(char []){1,1},(char []){1,1}}, 2},
 	{(char *[]){(char []){0,0,0,0}, (char []){1,1,1,1}, (char []){0,0,0,0}, (char []){0,0,0,0}}, 4}
 };
-// const t_shape BLOCK_PATTERN[7]= {
-// 	{{{0,1,1},{1,1,0},{0,0,0}}, 3},
-// 	{{{1,1,0},{0,1,1},{0,0,0}}, 3},
-// 	{{{0,1,0},{1,1,1},{0,0,0}}, 3},
-// 	{{{0,0,1},{1,1,1},{0,0,0}}, 3},
-// 	{{{1,0,0},{1,1,1},{0,0,0}}, 3},
-// 	{{{1,1},{1,1}}, 2},
-// 	{{{0,0,0,0},{1,1,1,1}, {0,0,0,0}}, 4},
-// };
 
 t_shape copy_shape(t_shape shape){
 	t_shape new_shape = shape;
@@ -68,7 +43,6 @@ void delete_shape(t_shape shape){
     free(shape.layout);
 }
 
-// int FunctionCP(t_shape shape){
 int is_valid_position(t_shape shape){
 	char **layout = shape.layout;
 	int i, j;
@@ -99,29 +73,40 @@ void rotate_shape(t_shape shape){
 	delete_shape(temp);
 }
 
-// 現在のブロック位置を画面上に反映する
-void update_screen(t_shape shape){
-	// ブロック位置の情報をバッファに書き込む
-	char Buffer[ROW][COLUMN] = {0};
+void set_active_shape_position(t_shape shape){
+	char active_shape_position[ROW][COLUMN] = {0};
 	int i, j;
 	for(i = 0; i < shape.width ;i++){
 		for(j = 0; j < shape.width ; j++){
 			if(shape.layout[i][j])
-				Buffer[shape.row+i][shape.col+j] = shape.layout[i][j];
+				active_shape_position[shape.row+i][shape.col+j] = shape.layout[i][j];
+		}
+	}
+}
+
+// 現在のブロック位置を画面上に反映する
+void update_screen(t_shape shape){
+	char active_shape_position[ROW][COLUMN] = {0};
+	// 動いているブロックの位置をGridに格納
+	int i, j;
+	for(i = 0; i < shape.width ;i++){
+		for(j = 0; j < shape.width ; j++){
+			if(shape.layout[i][j])
+				active_shape_position[shape.row+i][shape.col+j] = shape.layout[i][j];
 		}
 	}
 	clear();
 	printw("         42 Tetris\n");
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printw("%c ", (Table[i][j] + Buffer[i][j])? BLOCK: EMPTY);
-			// printw("%c ", Table[i][j]? BLOCK: EMPTY);
+			printw("%c ", (Table[i][j] + active_shape_position[i][j])? BLOCK: EMPTY);
 		}
 		printw("\n");
 	}
 	printw("\nScore: %d\n", score);
 }
 
+// 引数で渡された列がそろっているかを判定する
 int is_completed_line(char line[COLUMN]) {
 	int i;
 	for (i = 0; i < COLUMN; i++) {
@@ -132,15 +117,15 @@ int is_completed_line(char line[COLUMN]) {
 	return TRUE;
 }
 
-// n行目を消す
+// n列目のブロックをTableから削除する
 void	line_clear(char table[ROW][COLUMN], int n)
 {
 	int i, j;
-	// nより上の行を下にずらす
+	// nより上の列を下にずらす
 	for (i = n; i >= 1; i--)
 		for (j = 0; j < COLUMN; j++)
 			Table[i][j] = Table[i - 1][j];
-	// 一番上の行は空行にする
+	// 一番上の列は空にする
 	for (j = 0; j < COLUMN; j++)
 		Table[0][j] = 0;
 }
@@ -158,7 +143,8 @@ int	clear_completed_lines(char table[ROW][COLUMN])
 	return completed_line;
 }
 
-void set_shape_position(t_shape shape){
+// ブロック位置を確定させる
+void fix_shape_position(t_shape shape){
 	int i, j;
 	for(i = 0; i < shape.width ;i++){
 		for(j = 0; j < shape.width ; j++){
@@ -167,8 +153,6 @@ void set_shape_position(t_shape shape){
 		}
 	}
 }
-
-struct timeval before_now, now;
 
 int is_updatetime(){
 	return ((suseconds_t)(now.tv_sec*1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec*1000000 + before_now.tv_usec)) > update_interval;
@@ -205,14 +189,14 @@ int main() {
   initscr();
 	gettimeofday(&before_now, NULL);
 	timeout(1);
+	delete_shape(current);
 	t_shape new_shape = generate_new_shape();
-  delete_shape(current);
 	current = new_shape;
 	// if(!FunctionCP(current)){
 	if(!is_valid_position(current)){
 		GameOn = FALSE;
 	}
-	// set_shape_position(current);
+	// set_active_shape_position(current);
   update_screen(current);
 	while(GameOn){
 		if ((ch = getch()) != ERR) {
@@ -224,7 +208,7 @@ int main() {
 						current.row++;
 					else {
 						// ブロック位置の情報をTableに書き込む
-						set_shape_position(current);
+						fix_shape_position(current);
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
@@ -255,7 +239,7 @@ int main() {
 					break;
 			}
 			delete_shape(temp);
-			// set_shape_position(current);
+			// set_active_shape_position(current);
 			update_screen(current);
 		}
 		gettimeofday(&now, NULL);
@@ -267,7 +251,7 @@ int main() {
 						current.row++;
 					else {
 						// ブロック位置の情報をTableに書き込む
-						set_shape_position(current);
+						fix_shape_position(current);
 						// そろった行を消す
 						int completed_line=0;
 						completed_line = clear_completed_lines(Table);
@@ -281,7 +265,7 @@ int main() {
 						}
 					}
 			delete_shape(temp);
-			// set_shape_position(current);
+			// set_active_shape_position(current);
 			update_screen(current);
 			gettimeofday(&before_now, NULL);
 		}
