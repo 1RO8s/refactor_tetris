@@ -2,7 +2,7 @@ CC		:= gcc
 # CFLAGS	:= -Wall -Wextra -Werror
 NAME	:= tetris
 RM		:= rm -f
-SRCS	:= tetris.c
+SRCS	:= tetris.c src/shape.c src/table.c
 OBJS	:= $(SRCS:.c=.o)
 # SRCS_DIR	:= srcs
 INC_DIR	:= includes

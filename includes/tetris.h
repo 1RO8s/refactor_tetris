@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/01/30 18:40:28 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/01/30 19:55:26 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@
  * as well as its current position on the game board. The layout is represented
  * as a 2D array of characters, where each character can indicate a part of the
  * piece or an empty space. The width denotes the size of the piece's layout,
- * and the row and col fields specify the piece's top-left position on the board.
+
+	* and the row and col fields specify the piece's top-left position on the board.
  *
  * @var char **layout
  * 2D array representing the piece's layout.
@@ -50,12 +51,31 @@
  */
 typedef struct s_shape
 {
-	char	**layout; /**< Pointer to a 2D array containing the layout of the Tetris piece. */
-	int		width; /**< Width of the Tetris piece in terms of number of columns. */
+	char	**layout;
+	int		width;
 	int		row;
-	/** Row position of the Tetris piece's top-left corner on the game board. */
 	int		col;
-	/** Column position of the Tetris piece's top-left corner on the game board. */
 }			t_shape;
+
+extern char Table[ROW][COLUMN];     // 現在の盤面を表す
+extern struct timeval before_now;   // 前回の画面更新時間
+extern struct timeval now;          // 現在の時間
+extern suseconds_t update_interval; // 画面更新間隔
+extern int decrease;                // 画面更新間隔の減少量
+extern int score;                   // スコア
+
+// shape.c
+t_shape		generate_new_shape(void);
+t_shape		copy_shape(t_shape shape);
+void		delete_shape(t_shape shape);
+void		rotate_shape(t_shape shape);
+// table.c
+void		update_screen(t_shape shape);
+void		set_active_shape_position(t_shape shape);
+void		line_clear(char table[ROW][COLUMN], int n);
+int			clear_completed_lines(char table[ROW][COLUMN]);
+
+// utils.c
+int			is_completed_line(char line[COLUMN]);
 
 #endif
