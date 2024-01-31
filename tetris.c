@@ -9,13 +9,24 @@
 // int score = 0;
 
 
-void init_game(t_game *game){
+void init_table(char table[ROW][COLUMN]){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			game->Table[i][j] = 0;
+			table[i][j] = 0;
 		}
 	}
+}
+
+void init_game(t_game *game){
+	// int i, j;
+	// for(i = 0; i < ROW ;i++){
+	// 	for(j = 0; j < COLUMN ; j++){
+	// 		game->Table[i][j] = 0;
+	// 	}
+	// }
+	init_table(game->Table);
+	init_table(game->block_position);
 	game->is_playing = TRUE;
 	game->update_interval = 400000;
 	game->decrease = 1000;
@@ -40,7 +51,7 @@ int main() {
 	if(!is_valid_position(&game,game.current)){
 		game.is_playing = FALSE;
 	}
-	// set_active_shape_position(current);
+	set_active_block_position(&game);
   update_screen(&game);
 	while(game.is_playing){
 		if ((ch = getch()) != ERR) {
@@ -53,14 +64,7 @@ int main() {
 					else {
 						// ブロック位置を確定
 						fix_shape_position(&game);
-						// そろった行を消す
-						int completed_line=0;
-						completed_line = clear_completed_lines(&game);
-						game.score += 100*completed_line;
-						// 新しいブロックを生成
-						// delete_shape(current);
-						// t_shape new_shape = generate_new_shape();
-						// current = new_shape;
+						clear_completed_lines(&game);
 						game.current = generate_new_shape();
 						if(!is_valid_position(&game,game.current)){
 							game.is_playing = FALSE;
@@ -84,7 +88,7 @@ int main() {
 					break;
 			}
 			delete_shape(temp);
-			// set_active_shape_position(current);
+			set_active_block_position(&game);
 			update_screen(&game);
 		}
 		gettimeofday(&(game.now), NULL);
@@ -95,23 +99,15 @@ int main() {
 					if(is_valid_position(&game,temp))
 						game.current.row++;
 					else {
-						// ブロック位置を確定
 						fix_shape_position(&game);
-						// そろった行を消す
-						int completed_line=0;
-						completed_line = clear_completed_lines(&game);
-						game.score += 100*completed_line;
-						// 新しいブロックを生成
-						// delete_shape(current);
-						// t_shape new_shape = generate_new_shape();
-						// current = new_shape;
+						clear_completed_lines(&game);
 						game.current = generate_new_shape();
 						if(!is_valid_position(&game,game.current)){
 							game.is_playing = FALSE;
 						}
 					}
 			delete_shape(temp);
-			// set_active_shape_position(current);
+			set_active_block_position(&game);
 			update_screen(&game);
 			gettimeofday(&(game.before_now), NULL);
 		}

@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/02/01 02:08:51 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/02/01 02:59:31 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_shape
 typedef struct s_game
 {
 	char			Table[ROW][COLUMN];
+	char 			block_position[ROW][COLUMN];
 	int				is_playing;
 	suseconds_t		update_interval;
 	int				decrease;
@@ -60,7 +61,7 @@ void				delete_shape(t_shape shape);
 void				rotate_shape(t_shape shape);
 // table.c
 void				update_screen(t_game *game);
-void				set_active_shape_position(t_shape shape);
+void				set_active_block_position(t_game *game);
 // void				line_clear(char table[ROW][COLUMN], int n);
 void				line_clear(t_game *game, int n);
 // int			clear_completed_lines(char table[ROW][COLUMN]);
@@ -71,5 +72,8 @@ void				print_result(t_game *game);
 int					is_valid_position(t_game *game, t_shape shape);
 int					is_completed_line(char line[COLUMN]);
 int					is_updatetime(t_game *game);
+
+// tetris.c
+void init_table(char table[ROW][COLUMN]);
 
 #endif
