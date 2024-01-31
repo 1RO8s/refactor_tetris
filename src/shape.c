@@ -20,7 +20,6 @@ t_shape generate_new_shape(){
 
 t_shape copy_shape(t_shape shape){
 	t_shape new_shape = shape;
-	// char **copyshape = shape.layout;
 	new_shape.layout = (char**)malloc(new_shape.width*sizeof(char*));
     int i, j;
     for(i = 0; i < new_shape.width; i++){

@@ -1,14 +1,5 @@
 # include "tetris.h"
 
-// char Table[ROW][COLUMN] = {0};
-// int GameOn = TRUE;
-// suseconds_t update_interval = 400000;
-// int decrease = 1000;
-// struct timeval before_now;
-// struct timeval now;
-// int score = 0;
-
-
 void init_table(char table[ROW][COLUMN]){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
@@ -19,12 +10,6 @@ void init_table(char table[ROW][COLUMN]){
 }
 
 void init_game(t_game *game){
-	// int i, j;
-	// for(i = 0; i < ROW ;i++){
-	// 	for(j = 0; j < COLUMN ; j++){
-	// 		game->Table[i][j] = 0;
-	// 	}
-	// }
 	init_table(game->Table);
 	init_table(game->block_position);
 	game->is_playing = TRUE;
@@ -43,11 +28,6 @@ int main() {
   char ch; // 入力された文字
   initscr();
 	timeout(1);
-	// t_shape current; // 現在操作中のブロック
-	// delete_shape(current);
-	// t_shape new_shape = generate_new_shape();
-	// current = new_shape;
-	// current = generate_new_shape();
 	if(!is_valid_position(&game,game.current)){
 		game.is_playing = FALSE;
 	}
@@ -62,7 +42,6 @@ int main() {
 					if(is_valid_position(&game,temp))
 						game.current.row++;
 					else {
-						// ブロック位置を確定
 						fix_shape_position(&game);
 						clear_completed_lines(&game);
 						game.current = generate_new_shape();

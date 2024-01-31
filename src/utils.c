@@ -13,9 +13,7 @@ void print_result(t_game *game){
 }
 
 // ブロック位置が有効範囲内かを判定する
-// int is_valid_position(t_shape shape){
 int is_valid_position(t_game *game, t_shape shape){
-	// t_shape shape = game->current;
 	char **layout = shape.layout;
 	int i, j;
 	for(i = 0; i < shape.width;i++) {

@@ -1,20 +1,10 @@
 #include "tetris.h"
 
-// 現在のブロック位置を画面上に反映する
+// 操作中のブロック位置を画面上に反映する
 void update_screen(t_game *game){
-	// t_shape shape = game->current;
-	// char active_shape_position[ROW][COLUMN] = {0};
-	// // 動いているブロックの位置をGridに格納
-	int i, j;
-	// for(i = 0; i < shape.width ;i++){
-	// 	for(j = 0; j < shape.width ; j++){
-	// 		if(shape.layout[i][j])
-	// 			active_shape_position[shape.row+i][shape.col+j] = shape.layout[i][j];
-	// 	}
-	// }
-	// set_active_block_position(game);
 	clear();
 	printw("         42 Tetris\n");
+	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
 			printw("%c ", (game->Table[i][j] + game->block_position[i][j])? BLOCK: EMPTY);
@@ -24,20 +14,10 @@ void update_screen(t_game *game){
 	printw("\nScore: %d\n", game->score);
 }
 
-// 操作中のブロックの位置を更新する
+// 操作中のブロックの位置をGridに記録する
 void set_active_block_position(t_game *game){
-	// char active_shape_position[ROW][COLUMN] = {0};
-	// int i, j;
-	// for(i = 0; i < shape.width ;i++){
-	// 	for(j = 0; j < shape.width ; j++){
-	// 		if(shape.layout[i][j])
-	// 			active_shape_position[shape.row+i][shape.col+j] = shape.layout[i][j];
-	// 	}
-	// }
 	t_shape shape = game->current;
-	// char active_shape_position[ROW][COLUMN] = {0};
 	init_table(game->block_position);
-	// 動いているブロックの位置をGridに格納
 	int i, j;
 	for(i = 0; i < shape.width ;i++){
 		for(j = 0; j < shape.width ; j++){
@@ -51,7 +31,6 @@ void set_active_block_position(t_game *game){
 // void	line_clear(char table[ROW][COLUMN], int n)
 void	line_clear(t_game *game, int n)
 {
-	// char Table[ROW][COLUMN] = game->Table;
 	int i, j;
 	// nより上の列を下にずらす
 	for (i = n; i >= 1; i--)
@@ -65,7 +44,6 @@ void	line_clear(t_game *game, int n)
 // ブロックがそろった列を消す
 int	clear_completed_lines(t_game *game)
 {
-	// char Table[ROW][COLUMN] = game->Table;
 	int n, m, completed_line = 0;
 	for (n = 0; n < ROW; n++)
 		if (is_completed_line(game->Table[n]))
@@ -75,7 +53,6 @@ int	clear_completed_lines(t_game *game)
 			game->update_interval -= game->decrease--; // 更新頻度を短くする
 		}
 	game->score += 100*completed_line;
-
 	return completed_line;
 }
 
