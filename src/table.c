@@ -67,3 +67,15 @@ void fix_shape_position(t_game *game){
 		}
 	}
 }
+
+void init_game(t_game *game){
+	init_table(game->Table);
+	init_table(game->block_position);
+	game->is_playing = TRUE;
+	game->update_interval = 400000;
+	game->decrease = 1000;
+	gettimeofday(&(game->before_now), NULL);
+	gettimeofday(&(game->now), NULL);
+	game->score = 0;
+	game->current = generate_new_shape();
+}
