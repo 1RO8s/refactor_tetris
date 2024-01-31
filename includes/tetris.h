@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/02/01 03:18:22 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:29:18 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ typedef struct s_shape
 
 typedef struct s_game
 {
-	char Table[ROW][COLUMN];          // lockされたブロックの位置を表す
-	char block_position[ROW][COLUMN]; // 操作中のブロックの位置を表す
+	char locked_block_position[ROW][COLUMN];          // ロック済のブロック位置を表す
+	char active_block_position[ROW][COLUMN]; // 操作中のブロック位置を表す
 	int is_playing;                   // ゲームが続行中かどうか
 	suseconds_t update_interval;      // 画面更新間隔
 	int decrease;                     // 画面更新間隔の減少量

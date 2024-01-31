@@ -4,7 +4,7 @@ void print_result(t_game *game){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printf("%c ", game->Table[i][j] ? BLOCK: EMPTY);
+			printf("%c ", game->locked_block_position[i][j] ? BLOCK: EMPTY);
 		}
 		printf("\n");
 	}
@@ -24,7 +24,7 @@ int is_valid_position(t_game *game, t_shape shape){
 					return FALSE;
 				
 			} // 他のブロックと重なったらFALSE
-			else if(game->Table[shape.row+i][shape.col+j] && layout[i][j])
+			else if(game->locked_block_position[shape.row+i][shape.col+j] && layout[i][j])
 				return FALSE;
 		}
 	}

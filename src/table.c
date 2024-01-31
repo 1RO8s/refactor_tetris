@@ -7,7 +7,7 @@ void update_screen(t_game *game){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printw("%c ", (game->Table[i][j] + game->block_position[i][j])? BLOCK: EMPTY);
+			printw("%c ", (game->locked_block_position[i][j] + game->active_block_position[i][j])? BLOCK: EMPTY);
 		}
 		printw("\n");
 	}
@@ -17,28 +17,27 @@ void update_screen(t_game *game){
 // 操作中のブロックの位置をGridに記録する
 void set_active_block_position(t_game *game){
 	t_shape shape = game->current;
-	init_table(game->block_position);
+	init_table(game->active_block_position);
 	int i, j;
 	for(i = 0; i < shape.width ;i++){
 		for(j = 0; j < shape.width ; j++){
 			if(shape.layout[i][j])
-				game->block_position[shape.row+i][shape.col+j] = shape.layout[i][j];
+				game->active_block_position[shape.row+i][shape.col+j] = shape.layout[i][j];
 		}
 	}
 }
 
 // n列目のブロックをTableから削除する
-// void	line_clear(char table[ROW][COLUMN], int n)
 void	line_clear(t_game *game, int n)
 {
 	int i, j;
 	// nより上の列を下にずらす
 	for (i = n; i >= 1; i--)
 		for (j = 0; j < COLUMN; j++)
-			game->Table[i][j] = game->Table[i - 1][j];
+			game->locked_block_position[i][j] = game->locked_block_position[i - 1][j];
 	// 一番上の列は空にする
 	for (j = 0; j < COLUMN; j++)
-		game->Table[0][j] = 0;
+		game->locked_block_position[0][j] = 0;
 }
 
 // ブロックがそろった列を消す
@@ -46,7 +45,7 @@ int	clear_completed_lines(t_game *game)
 {
 	int n, m, completed_line = 0;
 	for (n = 0; n < ROW; n++)
-		if (is_completed_line(game->Table[n]))
+		if (is_completed_line(game->locked_block_position[n]))
 		{
 			completed_line++;
 			line_clear(game, n);
@@ -63,14 +62,14 @@ void fix_shape_position(t_game *game){
 	for(i = 0; i < shape.width ;i++){
 		for(j = 0; j < shape.width ; j++){
 			if(shape.layout[i][j])
-				game->Table[shape.row+i][shape.col+j] = shape.layout[i][j];
+				game->locked_block_position[shape.row+i][shape.col+j] = shape.layout[i][j];
 		}
 	}
 }
 
 void init_game(t_game *game){
-	init_table(game->Table);
-	init_table(game->block_position);
+	init_table(game->locked_block_position);
+	init_table(game->active_block_position);
 	game->is_playing = TRUE;
 	game->update_interval = 400000;
 	game->decrease = 1000;
