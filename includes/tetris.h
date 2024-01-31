@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/01/30 20:08:19 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/02/01 02:08:51 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,41 +21,55 @@
 
 # define ROW 20    // 縦のマス数
 # define COLUMN 15 // 横のマス数
-# define BLOCK '*' // ブロックを表す文字
+# define BLOCK '#' // ブロックを表す文字
 # define EMPTY '.' // ブロックがないことを表す文字
 # define TRUE 1
 # define FALSE 0
 
 typedef struct s_shape
 {
-	char	**layout;
-	int		width;
-	int		row;
-	int		col;
-}			t_shape;
+	char			**layout;
+	int				width;
+	int				row;
+	int				col;
+}					t_shape;
 
-extern char Table[ROW][COLUMN];     // 現在の盤面を表す
-extern struct timeval before_now;   // 前回の画面更新時間
-extern struct timeval now;          // 現在の時間
-extern suseconds_t update_interval; // 画面更新間隔
-extern int decrease;                // 画面更新間隔の減少量
-extern int score;                   // スコア
+typedef struct s_game
+{
+	char			Table[ROW][COLUMN];
+	int				is_playing;
+	suseconds_t		update_interval;
+	int				decrease;
+	struct timeval	before_now;
+	struct timeval	now;
+	int				score;
+	t_shape			current;
+}					t_game;
+
+// extern char Table[ROW][COLUMN];     // 現在の盤面を表す
+// extern struct timeval before_now;   // 前回の画面更新時間
+// extern struct timeval now;          // 現在の時間
+// extern suseconds_t update_interval; // 画面更新間隔
+// extern int decrease;                // 画面更新間隔の減少量
+// extern int score;                   // スコア
 
 // shape.c
-t_shape		generate_new_shape(void);
-t_shape		copy_shape(t_shape shape);
-void		delete_shape(t_shape shape);
-void		rotate_shape(t_shape shape);
+t_shape				generate_new_shape(void);
+t_shape				copy_shape(t_shape shape);
+void				delete_shape(t_shape shape);
+void				rotate_shape(t_shape shape);
 // table.c
-void		update_screen(t_shape shape);
-void		set_active_shape_position(t_shape shape);
-void		line_clear(char table[ROW][COLUMN], int n);
-int			clear_completed_lines(char table[ROW][COLUMN]);
-void		fix_shape_position(t_shape shape);
+void				update_screen(t_game *game);
+void				set_active_shape_position(t_shape shape);
+// void				line_clear(char table[ROW][COLUMN], int n);
+void				line_clear(t_game *game, int n);
+// int			clear_completed_lines(char table[ROW][COLUMN]);
+int					clear_completed_lines(t_game *game);
+void				fix_shape_position(t_game *game);
 // utils.c
-void		print_result(void);
-int			is_valid_position(t_shape shape);
-int			is_completed_line(char line[COLUMN]);
-int			is_updatetime(void);
+void				print_result(t_game *game);
+int					is_valid_position(t_game *game, t_shape shape);
+int					is_completed_line(char line[COLUMN]);
+int					is_updatetime(t_game *game);
 
 #endif

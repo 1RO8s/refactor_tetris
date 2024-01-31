@@ -1,19 +1,21 @@
 #include "tetris.h"
 
-void print_result(){
+void print_result(t_game *game){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printf("%c ", Table[i][j] ? BLOCK: EMPTY);
+			printf("%c ", game->Table[i][j] ? BLOCK: EMPTY);
 		}
 		printf("\n");
 	}
 	printf("\nGame over!\n");
-	printf("\nScore: %d\n", score);
+	printf("\nScore: %d\n", game->score);
 }
 
 // ブロック位置が有効範囲内かを判定する
-int is_valid_position(t_shape shape){
+// int is_valid_position(t_shape shape){
+int is_valid_position(t_game *game, t_shape shape){
+	// t_shape shape = game->current;
 	char **layout = shape.layout;
 	int i, j;
 	for(i = 0; i < shape.width;i++) {
@@ -24,7 +26,7 @@ int is_valid_position(t_shape shape){
 					return FALSE;
 				
 			} // 他のブロックと重なったらFALSE
-			else if(Table[shape.row+i][shape.col+j] && layout[i][j])
+			else if(game->Table[shape.row+i][shape.col+j] && layout[i][j])
 				return FALSE;
 		}
 	}
@@ -42,6 +44,9 @@ int is_completed_line(char line[COLUMN]) {
 	return TRUE;
 }
 
-int is_updatetime(){
+int is_updatetime(t_game *game){
+	struct timeval now = game->now;
+	struct timeval before_now = game->before_now;
+	suseconds_t		update_interval = game->update_interval;
 	return ((suseconds_t)(now.tv_sec*1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec*1000000 + before_now.tv_usec)) > update_interval;
 }
