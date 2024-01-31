@@ -1,17 +1,12 @@
 #include "tetris.h"
 
-// 操作中のブロック位置を画面上に反映する
-void update_screen(t_game *game){
-	clear();
-	printw("         42 Tetris\n");
+void init_table(char table[ROW][COLUMN]){
 	int i, j;
 	for(i = 0; i < ROW ;i++){
 		for(j = 0; j < COLUMN ; j++){
-			printw("%c ", (game->locked_block_position[i][j] + game->active_block_position[i][j])? BLOCK: EMPTY);
+			table[i][j] = 0;
 		}
-		printw("\n");
 	}
-	printw("\nScore: %d\n", game->score);
 }
 
 // 操作中のブロックの位置をGridに記録する
@@ -67,14 +62,3 @@ void fix_shape_position(t_game *game){
 	}
 }
 
-void init_game(t_game *game){
-	init_table(game->locked_block_position);
-	init_table(game->active_block_position);
-	game->is_playing = TRUE;
-	game->update_interval = 400000;
-	game->decrease = 1000;
-	gettimeofday(&(game->before_now), NULL);
-	gettimeofday(&(game->now), NULL);
-	game->score = 0;
-	game->current = generate_new_shape();
-}

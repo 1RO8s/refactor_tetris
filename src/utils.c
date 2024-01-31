@@ -48,12 +48,3 @@ int is_updatetime(t_game *game){
 	suseconds_t		update_interval = game->update_interval;
 	return ((suseconds_t)(now.tv_sec*1000000 + now.tv_usec) -((suseconds_t)before_now.tv_sec*1000000 + before_now.tv_usec)) > update_interval;
 }
-
-void init_table(char table[ROW][COLUMN]){
-	int i, j;
-	for(i = 0; i < ROW ;i++){
-		for(j = 0; j < COLUMN ; j++){
-			table[i][j] = 0;
-		}
-	}
-}
