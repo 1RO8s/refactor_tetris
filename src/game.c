@@ -24,6 +24,7 @@ void operate_active_block(t_game *game){
 			else {
 				fix_shape_position(game);
 				clear_completed_lines(game);
+				delete_shape(&game->current);
 				game->current = generate_new_shape();
 				if(!is_valid_position(game,game->current)){
 					game->is_playing = FALSE;
@@ -46,7 +47,7 @@ void operate_active_block(t_game *game){
 				rotate_shape(game->current);
 			break;
 	}
-	delete_shape(temp);
+	delete_shape(&temp);
 	set_active_block_position(game);
 	update_screen(game);
 	}
@@ -63,12 +64,13 @@ void falling_active_block(t_game *game){
 				else {
 					fix_shape_position(game);
 					clear_completed_lines(game);
+					delete_shape(&game->current);
 					game->current = generate_new_shape();
 					if(!is_valid_position(game,game->current)){
 						game->is_playing = FALSE;
 					}
 				}
-		delete_shape(temp);
+		delete_shape(&temp);
 		set_active_block_position(game);
 		update_screen(game);
 		gettimeofday(&(game->before_now), NULL);

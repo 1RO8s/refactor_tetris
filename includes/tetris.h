@@ -6,7 +6,7 @@
 /*   By: hnagasak <hnagasak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:57:56 by hnagasak          #+#    #+#             */
-/*   Updated: 2024/02/01 03:55:32 by hnagasak         ###   ########.fr       */
+/*   Updated: 2024/02/02 22:39:53 by hnagasak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void		update_screen(t_game *game);
 // shape.c
 t_shape		generate_new_shape(void);
 t_shape		copy_shape(t_shape shape);
-void		delete_shape(t_shape shape);
+void		delete_shape(t_shape *shape);
 void		rotate_shape(t_shape shape);
 // table.c
 void		init_table(char table[ROW][COLUMN]);

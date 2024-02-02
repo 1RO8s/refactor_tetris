@@ -16,7 +16,7 @@ int	main(void)
 		operate_active_block(&game);
 		falling_active_block(&game);
 	}
-	delete_shape(game.current);
+	delete_shape(&(game.current));
 	endwin();
 	print_result(&game);
 	return (0);
