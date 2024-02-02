@@ -12,7 +12,7 @@ void init_game(t_game *game){
 	game->current = generate_new_shape();
 }
 
-void operate_active_block(t_game *game){
+void control_active_block(t_game *game){
 	char ch; // 入力された文字
 	if ((ch = getch()) != ERR) {
 	t_shape temp = copy_shape(game->current);
@@ -24,7 +24,7 @@ void operate_active_block(t_game *game){
 			else {
 				fix_shape_position(game);
 				clear_completed_lines(game);
-				delete_shape(&game->current);
+				free_shape_layout(&game->current);
 				game->current = generate_new_shape();
 				if(!is_valid_position(game,game->current)){
 					game->is_playing = FALSE;
@@ -47,7 +47,7 @@ void operate_active_block(t_game *game){
 				rotate_shape(game->current);
 			break;
 	}
-	delete_shape(&temp);
+	free_shape_layout(&temp);
 	set_active_block_position(game);
 	update_screen(game);
 	}
@@ -64,13 +64,13 @@ void falling_active_block(t_game *game){
 				else {
 					fix_shape_position(game);
 					clear_completed_lines(game);
-					delete_shape(&game->current);
+					free_shape_layout(&game->current);
 					game->current = generate_new_shape();
 					if(!is_valid_position(game,game->current)){
 						game->is_playing = FALSE;
 					}
 				}
-		delete_shape(&temp);
+		free_shape_layout(&temp);
 		set_active_block_position(game);
 		update_screen(game);
 		gettimeofday(&(game->before_now), NULL);

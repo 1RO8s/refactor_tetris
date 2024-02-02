@@ -30,8 +30,8 @@ t_shape copy_shape(t_shape shape){
     }
     return new_shape;
 }
-
-void delete_shape(t_shape *shape){
+// void delete_shape(t_shape *shape){
+void free_shape_layout(t_shape *shape){
     int i;
     for(i = 0; i < shape->width; i++){
 		free(shape->layout[i]);
@@ -50,5 +50,5 @@ void rotate_shape(t_shape shape){
 				shape.layout[i][j] = temp.layout[k][i];
 		}
 	}
-	delete_shape(&temp);
+	free_shape_layout(&temp);
 }

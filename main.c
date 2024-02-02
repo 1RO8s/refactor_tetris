@@ -13,10 +13,10 @@ int	main(void)
 	set_active_block_position(&game);
 	update_screen(&game);
 	while (game.is_playing){
-		operate_active_block(&game);
+		control_active_block(&game);
 		falling_active_block(&game);
 	}
-	delete_shape(&(game.current));
+	free_shape_layout(&(game.current));
 	endwin();
 	print_result(&game);
 	return (0);
